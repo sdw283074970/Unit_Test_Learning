@@ -4,7 +4,7 @@
 //Q: 如何使用MSTest进行单元测试？
 //A: 单元测试的对象为类中的方法执行单元测试跟随以下步骤：
     //1.新建测试类；
-    //2.梳理受测方法的逻辑、输入情景和期望输出；
+    //2.梳理受测方法的输入情景、逻辑和期望输出；
     //3.以输入情景为单位，在测试类中为每一种情景建立一个测试方法；
     //4.点击测试 => 运行 => 所有测试，进行测试；
     //5.在测试浏览器中观察测试结果。
@@ -16,8 +16,6 @@
     [TestClass]   //测试特性，运行测试时被该特性标记的类会执行测试
     public class UnitTest1
     {
-        private TestContext testContextInstance;
-
         [TestMethod]    //测试特性，在测试类下的测试方法将会执行测试
         public void TestMethod1()
         {
@@ -29,8 +27,8 @@
 
   //测试类命名约定为[受测类名]+Tests
 
-//Q: 如何梳理受测类的逻辑、输入情景和期望输出？
-//A: 这一步是为了确认受测类的功能。假设有如下类：
+//Q: 如何梳理受测类的输入情景、逻辑和期望输出？
+//A: 输入情景决定了方法受测次数，逻辑是测试实现的过程，期望输出是测试的评判标准。假设有如下类：
 
     public class Reservation
     {
@@ -42,9 +40,61 @@
         }
     }
 
-  //这个类只有一个CanBeCancelledBy()方法，一个方法就是一个单元，针对这个方法可以写一个单元测试。
+  //这个类只有一个CanBeCancelledBy()方法，一个方法就是一个单元，针对这个方法的测试即是单元测试。
+  //该方法返回一个布尔值，即判定输入的用户是否有资格取消预定。梳理这个方法的输入、逻辑、输出如下：
+    //输入情景有三种，即用户为管理员、用户为预约用户、用户为非预定用户；
+    //逻辑为，管理员和预约用户可以取消预约，其他用户不能取消预约；
+    //期望输出为，管理员和预约用户返回true，其他用户返回false。
+
+//Q: 如何建立测试方法？
+//A: 这里有三种输入情景，要为每一种输入建立测试方法，即一共建立三个测试方法。建立测试方法需满足如下：
+  //1.测试方法由[TestClass]特性标识；
+  //2.测试方法都为为公有方法(public)，返回类型都为void，命名遵循[受测方法名]+[输入情景]+[期望输出]的约定，构造器为空；
+  //3.测试方法主体由三部分组成(AAA)，即局域变量部分(Arrange)、执行部分(Act)、断言判定部分(Assert)。
+
+  //以Reservation类中的CanBeCancelledBy()方法为例，其包括三个测试方法的测试类为：
+
+    [TestClass]
+    public class ReservationTests
+    {
+        [TestMethod]
+        public void CanBeCancelledBy_UserIsAdmin_ReturnsTurn()
+        {
+            // Arrange 在这里初始化对象
+            var reservation = new Reservation();    //初始化受测类实例(需导入其命名空间)
+
+            // Act 在这里执行测试方法
+            var result = reservation.CanBeCancelledBy(new User { IsAdmin = true });   //输入用户为管理员的情景
+
+            // Assert 断言，在这里检查返回结果是否符合期望
+            Assert.IsTrue(result);    //Assert类是静态类，IsTrue是其中的静态方法，此处断言输出结果是否为true
+        }
+
+        [TestMethod]
+        public void CanBeCancelledBy_UserIsTheSameUser_ReturnsTrue()
+        {
+            var user = new User();
+            var reservation = new Reservation { MadeBy = user};   //定义用户做了一个预约
+
+            var result = reservation.CanBeCancelledBy(user);    //输入用户为预约用户的情况
+
+            Assert.IsTrue(result);    //期望返回true
+        }
+
+        [Test]
+        public void CanBeCancelledBy_UserIsAnotherUser_RetuensFalse()
+        {
+            var user = new User();
+            var anotherUser = new User { IsAdmin = false};
+            var reservation = new Reservation { MadeBy = user };
+
+            var result = reservation.CanBeCancelledBy(anotherUser);   //输入用户为其他用户的情况
+
+            Assert.IsFalse(result);   //期望返回false
+        }
+    }
   
+  //写好测试代码，点击测试 => 运行 => 所有测试，即可运行这个项目中所有带[TestClass]中所有带[TestMethod]特性的方法。
+  //在弹出的测试浏览器中，绿勾意味着测试通过，否则测试不通过，就可以准确定位到出错的类和类中的方法以及输入情景。
 
-
-
-
+//暂时想到这么多，最后更新2018/04/20
