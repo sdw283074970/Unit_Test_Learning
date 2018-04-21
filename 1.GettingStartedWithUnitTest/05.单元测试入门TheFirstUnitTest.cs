@@ -78,7 +78,7 @@
 
             var result = reservation.CanBeCancelledBy(user);    //输入用户为预约用户的情况
 
-            Assert.IsTrue(result);    //期望返回true
+            Assert.IsTrue(result);    //期望结果为true
         }
 
         [TestMethod]
@@ -90,11 +90,11 @@
 
             var result = reservation.CanBeCancelledBy(anotherUser);   //输入用户为其他用户的情况
 
-            Assert.IsFalse(result);   //期望返回false
+            Assert.IsFalse(result);   //期望结果为false
         }
     }
   
   //写好测试代码，点击测试 => 运行 => 所有测试，即可运行这个项目中所有带[TestClass]中所有带[TestMethod]特性的方法。
-  //在弹出的测试浏览器中，绿勾意味着测试通过，否则测试不通过，就可以准确定位到出错的类和类中的方法以及输入情景。
+  //在弹出的测试浏览器中，绿勾意味着断言测试通过，否则测试不通过，就可以准确定位到出错的类和类中的方法以及输入情景。
 
 //暂时想到这么多，最后更新2018/04/20
