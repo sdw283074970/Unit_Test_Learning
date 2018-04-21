@@ -81,7 +81,7 @@
             Assert.IsTrue(result);    //期望返回true
         }
 
-        [Test]
+        [TestMethod]
         public void CanBeCancelledBy_UserIsAnotherUser_RetuensFalse()
         {
             var user = new User();
